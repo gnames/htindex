@@ -1,0 +1,14 @@
+---
+
+# Number of workers(jobs) to run indexing.
+jobs: 200
+
+# Path to a file with input data.
+input: /tmp/input.txt
+
+# Name of the root path to concatenate with each input path.
+root: /ht
+
+# Path to the output directory. This directory will contain files with
+# occurances of scientific names.
+output: /tmp/output
