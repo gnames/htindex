@@ -22,14 +22,28 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/gnames/htindex"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	buildVersion string
+	buildDate    string
+	cfgFile      string
+	opts         []htindex.Option
+)
+
+type config struct {
+	Root   string
+	Input  string
+	Output string
+	Jobs   int
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -41,13 +55,19 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-
+		versionFlag(cmd)
+		opts = getOpts()
+		opts = getFlags(opts, cmd)
+		hti := htindex.NewHTindex(opts...)
+		fmt.Println(hti)
 	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(ver string, date string) {
+	buildVersion = ver
+	buildDate = date
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -57,13 +77,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.htindex.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	rootCmd.Flags().BoolP("version", "v", false, "htindex version and build timestamp")
 	rootCmd.Flags().StringP("root", "r", "", "root path to add to the input file data")
 	rootCmd.Flags().StringP("input", "i", "", "path to the input data file")
 	rootCmd.Flags().StringP("output", "o", "", "path to the output directory")
@@ -94,4 +108,77 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func versionFlag(cmd *cobra.Command) {
+	version, err := cmd.Flags().GetBool("version")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if version {
+		fmt.Printf("\nversion: %s\n\nbuild:   %s\n\n",
+			buildVersion, buildDate)
+		os.Exit(0)
+	}
+}
+
+func getOpts() []htindex.Option {
+	var opts []htindex.Option
+	cfg := &config{}
+	err := viper.Unmarshal(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(cfg)
+
+	if cfg.Root != "" {
+		opts = append(opts, htindex.OptRoot(cfg.Root))
+	}
+	if cfg.Input != "" {
+		opts = append(opts, htindex.OptInput(cfg.Input))
+	}
+	if cfg.Output != "" {
+		opts = append(opts, htindex.OptOutput(cfg.Output))
+	}
+	if cfg.Jobs != 0 {
+		opts = append(opts, htindex.OptJobs(cfg.Jobs))
+	}
+	return opts
+}
+
+func getFlags(opts []htindex.Option, cmd *cobra.Command) []htindex.Option {
+	root, err := cmd.Flags().GetString("root")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if root != "" {
+		opts = append(opts, htindex.OptRoot(root))
+	}
+	input, err := cmd.Flags().GetString("input")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if input != "" {
+		opts = append(opts, htindex.OptInput(input))
+	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if output != "" {
+		opts = append(opts, htindex.OptOutput(output))
+	}
+	jobs, err := cmd.Flags().GetInt("jobs")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if jobs > 0 {
+		opts = append(opts, htindex.OptJobs(jobs))
+	}
+	return opts
 }

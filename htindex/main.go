@@ -22,6 +22,11 @@ package main
 
 import "github.com/gnames/htindex/htindex/cmd"
 
+var (
+	buildVersion string
+	buildDate    string
+)
+
 func main() {
-	cmd.Execute()
+	cmd.Execute(buildVersion, buildDate)
 }
