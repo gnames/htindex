@@ -1,5 +1,7 @@
 package htindex
 
+import "github.com/gnames/gnfinder/dict"
+
 // HTindex detects occurances of scientific names in Hathi Trust data.
 type HTindex struct {
 	// rootPrefix is concatenated with paths given in input file to get
@@ -11,6 +13,8 @@ type HTindex struct {
 	outputPath string
 	// jobsNum sets number of jobs/workers to run.
 	jobsNum int
+	// dict contains shared dictionary for name finding
+	dict *dict.Dictionary
 }
 
 type Option func(h *HTindex)
@@ -40,7 +44,7 @@ func OptOutput(s string) Option {
 }
 
 func NewHTindex(opts ...Option) *HTindex {
-	hti := &HTindex{}
+	hti := &HTindex{dict: dict.LoadDictionary()}
 	for _, opt := range opts {
 		opt(hti)
 	}

@@ -4,6 +4,8 @@
 
 ## [v0.0.1]
 
+- Add [#3]: Find scientific names in provided content.
+- Add [#2]: Read content data using data from input file.
 - Add [#1]: Read configuration from config file and flags.
 
 ## Footnotes

@@ -84,7 +84,7 @@ func init() {
 	rootCmd.Flags().StringP("root", "r", "", "root path to add to the input file data")
 	rootCmd.Flags().StringP("input", "i", "", "path to the input data file")
 	rootCmd.Flags().StringP("output", "o", "", "path to the output directory")
-	rootCmd.Flags().IntP("jobs", "j", 200, "number of workers (jobs)")
+	rootCmd.Flags().IntP("jobs", "j", 0, "number of workers (jobs)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -133,7 +133,6 @@ func getOpts() []htindex.Option {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(cfg)
 
 	if cfg.Root != "" {
 		opts = append(opts, htindex.OptRoot(cfg.Root))
@@ -144,7 +143,7 @@ func getOpts() []htindex.Option {
 	if cfg.Output != "" {
 		opts = append(opts, htindex.OptOutput(cfg.Output))
 	}
-	if cfg.Jobs != 0 {
+	if cfg.Jobs > 0 {
 		opts = append(opts, htindex.OptJobs(cfg.Jobs))
 	}
 	return opts
