@@ -59,7 +59,10 @@ var rootCmd = &cobra.Command{
 		opts = getOpts()
 		opts = getFlags(opts, cmd)
 		hti := htindex.NewHTindex(opts...)
-		fmt.Println(hti)
+		err := hti.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
