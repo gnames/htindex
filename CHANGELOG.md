@@ -15,7 +15,7 @@
 
 This document follows [changelog guidelines]
 
-[v0.0.1]: https://github.com/gnames/gnfinder/compare/v0.0.0...v0.0.1
+[v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
 [#6]: https://github.com/gnames/htindex/issues/6
 [#5]: https://github.com/gnames/htindex/issues/5

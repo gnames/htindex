@@ -14,7 +14,7 @@ their corpus by scientific names.
 
 ## Installation
 
-For Linux download the latest release, untar, and copy it to /usr/local/bin,
+For Linux download the [latest release], untar, and copy it to /usr/local/bin,
 or any other directory that is in the PATH.
 
 In the home directory of the user that will run the app create
@@ -75,3 +75,4 @@ Released under [MIT license]
 [Dmitry Mozzherin]: https://gitlab.com/dimus
 [example .htindex.yaml file]: https://raw.githubusercontent.com/gnames/htindex/master/files/.htindex.yaml
 [MIT license]: https://raw.githubusercontent.com/gnames/htindex/master/LICENSE
+[latest release]: https://github.com/gnames/htindex/releases/latest
