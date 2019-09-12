@@ -25,14 +25,20 @@ type HTindex struct {
 	reportNum int
 }
 
+// Option sets the time for all options received during creation of new instance
+// of HTindex object.
 type Option func(h *HTindex)
 
+// OptJobs sets number of jobs/workers to run duing execution.
 func OptJobs(i int) Option {
 	return func(h *HTindex) {
 		h.jobsNum = i
 	}
 }
 
+// OptReportNum sets how often to printout a line about the progress. When it is
+// set to 1 report line appears after processing every title, and if it is 10
+// progress is shows after every 10th title.
 func OptReportNum(i int) Option {
 	return func(h *HTindex) {
 		h.reportNum = i
@@ -40,24 +46,33 @@ func OptReportNum(i int) Option {
 
 }
 
+// OptRoot sets the prefix of the path to zipped titles. It wil be concatenated
+// with a path provided in the input file to receive complete absolute path.
 func OptRoot(s string) Option {
 	return func(h *HTindex) {
 		h.rootPrefix = s
 	}
 }
 
+// OptIntput is an absolute path to input data file. each line of such file
+// displays path to zipped file of a title.
 func OptInput(s string) Option {
 	return func(h *HTindex) {
 		h.inputPath = s
 	}
 }
 
+// OptOutput is an absolute path to a directory where results will be written.
+// If such directory does not exist already, it will be created during
+// initialization of HTindex instance.
 func OptOutput(s string) Option {
 	return func(h *HTindex) {
 		h.outputPath = s
 	}
 }
 
+// NewHTindex creates HTindex instance with several defaults. If
+// a some options are provided, they will override default settings.
 func NewHTindex(opts ...Option) (*HTindex, error) {
 	hti := &HTindex{dict: dict.LoadDictionary(), reportNum: 0}
 	for _, opt := range opts {

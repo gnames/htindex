@@ -18,6 +18,8 @@ var (
 	opts         []htindex.Option
 )
 
+// config purpose is to achieve automatic import of data from the
+// configuration file, if it exists.
 type config struct {
 	Root      string
 	Input     string
@@ -95,6 +97,7 @@ func initConfig() {
 	}
 }
 
+// versionFlag displays version and build information and exits the program.
 func versionFlag(cmd *cobra.Command) {
 	version, err := cmd.Flags().GetBool("version")
 	if err != nil {
@@ -108,6 +111,8 @@ func versionFlag(cmd *cobra.Command) {
 	}
 }
 
+// getOpts imports data from the configuration file. These settings can be
+// overriden by command line flags.
 func getOpts() []htindex.Option {
 	var opts []htindex.Option
 	cfg := &config{}
@@ -137,6 +142,7 @@ func getOpts() []htindex.Option {
 	return opts
 }
 
+// getFlags appends options with settings from supplied flags.
 func getFlags(opts []htindex.Option, cmd *cobra.Command) []htindex.Option {
 	root, err := cmd.Flags().GetString("root")
 	if err != nil {

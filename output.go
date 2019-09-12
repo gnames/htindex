@@ -12,7 +12,7 @@ import (
 	"github.com/gnames/gnfinder/output"
 )
 
-// DetectedName holds information about a name-string returned by a
+// detectedName holds information about a name-string returned by a
 // name-finder.
 type detectedName struct {
 	pageID       string
@@ -26,6 +26,7 @@ type detectedName struct {
 	timestamp    string
 }
 
+// outputError outputs errors arrived from the name-finding process.
 func (hti *HTindex) outputError(errCh <-chan error, wgOut *sync.WaitGroup) {
 	f, err := os.Create(filepath.Join(hti.outputPath, "errors.csv"))
 	defer wgOut.Done()
@@ -42,6 +43,7 @@ func (hti *HTindex) outputError(errCh <-chan error, wgOut *sync.WaitGroup) {
 	}
 }
 
+// outputResults outputs data about found names.
 func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	defer wgOut.Done()
 	count := 0
@@ -81,11 +83,14 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	}
 }
 
+// ts generates a converted to a string timestamp in nanoseconds from epoch.
 func ts() string {
 	t := time.Now()
 	return strconv.FormatInt(t.UnixNano(), 10)
 }
 
+// newDetectedName processes output from name-finding to prepare it for
+// htindex output.
 func newDetectedName(p *tpage, n output.Name) *detectedName {
 	var endsNextPage int
 	var end int
@@ -110,6 +115,7 @@ func newDetectedName(p *tpage, n output.Name) *detectedName {
 	return &dn
 }
 
+// generateNamesOutput splits results by pages, instead of by title.
 func generateNamesOutput(t *title) []*detectedName {
 	ns := make([]*detectedName, len(t.res.Names))
 	j := 0

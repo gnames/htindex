@@ -7,6 +7,7 @@ import (
 	"sync"
 )
 
+// Run is the main method for creation of the scientific names index.
 func (hti *HTindex) Run() error {
 	fmt.Printf("Processing with %d 'threads'\n", hti.jobsNum)
 	inCh := make(chan string)
@@ -31,6 +32,8 @@ func (hti *HTindex) Run() error {
 	return nil
 }
 
+// readInput traverses the input file and sends paths to title's zip files to
+// further processes.
 func (hti *HTindex) readInput(inCh chan<- string, errCh chan<- error) error {
 	file, err := os.Open(hti.inputPath)
 	if err != nil {
