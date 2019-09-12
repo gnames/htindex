@@ -45,21 +45,21 @@ If some settings for the app need to be modified during command line
 execution, use the following flags:
 
 `-h, --help`
-:help for htindex
+: Shows help
 
 `-j, --jobs`
-:takes an positive integer. Sets the number of workers (jobs). It looks like
+: Takes an positive integer. Sets the number of workers (jobs). It looks like
 optimal number is `number_of_threads * 3`.
 
 `-i, --input`
-:takes a string. Sets a path to the input data file
+: Takes a string. Sets a path to the input data file
 
 `-o, --output`
-: takes a string. Sets a path to the output directory. This directory will
+: Takes a string. Sets a path to the output directory. This directory will
 contain error log and results data.
 
 `-r, --root`
-: takes a string. Sets a root path to add to the input file data. This creates
+: Takes a string. Sets a root path to add to the input file data. This creates
 complete absolute path to zip files with volumes.
 
 `-v, --version`
