@@ -1,6 +1,11 @@
 package htindex
 
-import "github.com/gnames/gnfinder/dict"
+import (
+	"fmt"
+	"os"
+
+	"github.com/gnames/gnfinder/dict"
+)
 
 // HTindex detects occurances of scientific names in Hathi Trust data.
 type HTindex struct {
@@ -13,8 +18,11 @@ type HTindex struct {
 	outputPath string
 	// jobsNum sets number of jobs/workers to run.
 	jobsNum int
-	// dict contains shared dictionary for name finding
+	// dict contains shared dictionary for name finding.
 	dict *dict.Dictionary
+	// reportNum determines how many titles should be processed for
+	// a progress report.
+	reportNum int
 }
 
 type Option func(h *HTindex)
@@ -23,6 +31,13 @@ func OptJobs(i int) Option {
 	return func(h *HTindex) {
 		h.jobsNum = i
 	}
+}
+
+func OptReportNum(i int) Option {
+	return func(h *HTindex) {
+		h.reportNum = i
+	}
+
 }
 
 func OptRoot(s string) Option {
@@ -43,10 +58,22 @@ func OptOutput(s string) Option {
 	}
 }
 
-func NewHTindex(opts ...Option) *HTindex {
-	hti := &HTindex{dict: dict.LoadDictionary()}
+func NewHTindex(opts ...Option) (*HTindex, error) {
+	hti := &HTindex{dict: dict.LoadDictionary(), reportNum: 0}
 	for _, opt := range opts {
 		opt(hti)
 	}
-	return hti
+	err := hti.setOutputDir()
+	return hti, err
+}
+
+func (hti *HTindex) setOutputDir() error {
+	path, err := os.Stat(hti.outputPath)
+	if os.IsNotExist(err) {
+		return os.MkdirAll(hti.outputPath, 0755)
+	}
+	if path.Mode().IsRegular() {
+		return fmt.Errorf("'%s' is a file, not a directory", hti.outputPath)
+	}
+	return nil
 }

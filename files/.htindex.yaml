@@ -1,14 +1,18 @@
 ---
 
 # Number of workers(jobs) to run indexing.
-jobs: 200
+jobs: 50
 
 # Path to a file with input data.
-Input: /tmp/input.txt
+Input: /home/ht/input.txt
 
 # Name of the root path to concatenate with each input path.
-Root: /ht
+Root: /opt/ht
 
 # Path to the output directory. This directory will contain files with
 # occurances of scientific names.
 Output: /tmp/output
+
+# ReportNum tells how many titles have to be processed before sending a
+# progress report to the STDOUT. If the number is 0 reports do not generate.
+ReportNum: 10000
