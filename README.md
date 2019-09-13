@@ -17,11 +17,10 @@ their corpus by scientific names.
 For Linux or Mac download the [latest release], untar, and copy it to /usr/local/bin,
 or any other directory that is in the PATH.
 
-In the home directory of the user that will run the app create
-`.htindex.yaml`. Use an [example .htindex.yaml file] for reference. The
-example file explains configuration parameters. You can skip creation of the
-`.htindex.yaml` file, if you are planning to provide all the needed settings
-via command line flags.
+In your home directory create `.htindex.yaml`. Use an [example .htindex.yaml file]
+for reference. The example file explains configuration parameters. You can skip
+creation of the `.htindex.yaml` file, if you are planning to provide all the
+needed settings via command line flags.
 
 ## Usage
 
