@@ -1,6 +1,7 @@
 ---
 
-# Number of workers(jobs) to run indexing.
+# Number of workers(jobs) to run indexing. As a start, try
+# num_of_cpu_or_threads * 3.
 jobs: 50
 
 # Path to a file with input data.
