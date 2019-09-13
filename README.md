@@ -14,7 +14,7 @@ their corpus by scientific names.
 
 ## Installation
 
-For Linux download the [latest release], untar, and copy it to /usr/local/bin,
+For Linux or Mac download the [latest release], untar, and copy it to /usr/local/bin,
 or any other directory that is in the PATH.
 
 In the home directory of the user that will run the app create
