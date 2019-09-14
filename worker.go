@@ -34,6 +34,7 @@ type tpage struct {
 // title represents data and metadata from a title/book/volume.
 type title struct {
 	id    string
+	path  string
 	pages []*tpage
 	text  []byte
 	res   *output.Output
@@ -63,7 +64,7 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 	for zipPath := range inCh {
 		offset := 0
 		var pages []*tpage
-		t := title{id: getID(zipPath), pages: pages}
+		t := title{id: getID(zipPath), path: zipPath, pages: pages}
 		r, err := zip.OpenReader(filepath.Join(hti.rootPrefix, zipPath))
 		if err != nil {
 			errCh <- err

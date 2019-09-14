@@ -14,6 +14,12 @@ their corpus by scientific names.
 
 ## Installation
 
+For the app to work you need a directory of zipped titles/volumes organized by
+HathiTrust convention and a file that contains paths of these zipped files.
+
+The program gets information about these files either from a configuration
+file, or from command line flags.
+
 For Linux or Mac download the [latest release], untar, and copy it to /usr/local/bin,
 or any other directory that is in the PATH.
 

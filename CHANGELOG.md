@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#7]: Save metainformation about titles.
+
 ## [v0.0.1]
 
 - Add [#6]: prepare Makefile for the first release.
@@ -17,6 +19,7 @@ This document follows [changelog guidelines]
 
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#7]: https://github.com/gnames/htindex/issues/7
 [#6]: https://github.com/gnames/htindex/issues/6
 [#5]: https://github.com/gnames/htindex/issues/5
 [#4]: https://github.com/gnames/htindex/issues/4

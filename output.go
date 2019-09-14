@@ -48,18 +48,30 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	defer wgOut.Done()
 	count := 0
 	ts := time.Now()
+
 	f, err := os.Create(filepath.Join(hti.outputPath, "results.csv"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	titles, err := os.Create(filepath.Join(hti.outputPath, "titles.csv"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	of := csv.NewWriter(f)
+	tf := csv.NewWriter(titles)
 	of.Write([]string{
 		"TimeStamp", "ID", "PageID", "Verbatim", "NameString", "OffsetStart",
 		"OffsetEnd", "Odds", "Kind", "EndsNextPage",
 	})
-	if err != nil {
-		log.Fatal(err)
-	}
+	tf.Write([]string{"ID", "Path", "PagesNumber"})
+
 	defer f.Close()
 	defer of.Flush()
 	for t := range outCh {
+		tf.Write([]string{
+			t.id, t.path, strconv.Itoa(len(t.pages)), strconv.Itoa(len(t.res.Names)),
+		})
 		count++
 		if len(t.res.Names) == 0 {
 			continue
