@@ -67,7 +67,10 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	tf.Write([]string{"ID", "Path", "PagesNumber"})
 
 	defer f.Close()
+	defer titles.Close()
 	defer of.Flush()
+	defer tf.Flush()
+
 	for t := range outCh {
 		tf.Write([]string{
 			t.id, t.path, strconv.Itoa(len(t.pages)), strconv.Itoa(len(t.res.Names)),
