@@ -20,9 +20,9 @@ type HTindex struct {
 	jobsNum int
 	// dict contains shared dictionary for name finding.
 	dict *dict.Dictionary
-	// reportNum determines how many titles should be processed for
+	// progressNum determines how many titles should be processed for
 	// a progress report.
-	reportNum int
+	progressNum int
 }
 
 // Option sets the time for all options received during creation of new instance
@@ -36,12 +36,12 @@ func OptJobs(i int) Option {
 	}
 }
 
-// OptReportNum sets how often to printout a line about the progress. When it is
-// set to 1 report line appears after processing every title, and if it is 10
+// OptProgressNum sets how often to printout a line about the progress. When it
+// is set to 1 report line appears after processing every title, and if it is 10
 // progress is shows after every 10th title.
-func OptReportNum(i int) Option {
+func OptProgressNum(i int) Option {
 	return func(h *HTindex) {
-		h.reportNum = i
+		h.progressNum = i
 	}
 
 }
@@ -74,7 +74,7 @@ func OptOutput(s string) Option {
 // NewHTindex creates HTindex instance with several defaults. If
 // a some options are provided, they will override default settings.
 func NewHTindex(opts ...Option) (*HTindex, error) {
-	hti := &HTindex{dict: dict.LoadDictionary(), reportNum: 0}
+	hti := &HTindex{dict: dict.LoadDictionary(), progressNum: 0}
 	for _, opt := range opts {
 		opt(hti)
 	}

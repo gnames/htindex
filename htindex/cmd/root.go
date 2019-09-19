@@ -21,11 +21,11 @@ var (
 // config purpose is to achieve automatic import of data from the
 // configuration file, if it exists.
 type config struct {
-	Root      string
-	Input     string
-	Output    string
-	Jobs      int
-	ReportNum int
+	Root        string
+	Input       string
+	Output      string
+	Jobs        int
+	ProgressNum int
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -69,6 +69,7 @@ func init() {
 	rootCmd.Flags().StringP("input", "i", "", "path to the input data file")
 	rootCmd.Flags().StringP("output", "o", "", "path to the output directory")
 	rootCmd.Flags().IntP("jobs", "j", 0, "number of workers (jobs)")
+	rootCmd.Flags().IntP("progress", "p", 0, "number of titles in progress report")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -136,8 +137,8 @@ func getOpts() []htindex.Option {
 	if cfg.Jobs > 0 {
 		opts = append(opts, htindex.OptJobs(cfg.Jobs))
 	}
-	if cfg.ReportNum > 0 {
-		opts = append(opts, htindex.OptReportNum(cfg.ReportNum))
+	if cfg.ProgressNum > 0 {
+		opts = append(opts, htindex.OptProgressNum(cfg.ProgressNum))
 	}
 	return opts
 }
@@ -175,6 +176,14 @@ func getFlags(opts []htindex.Option, cmd *cobra.Command) []htindex.Option {
 	}
 	if jobs > 0 {
 		opts = append(opts, htindex.OptJobs(jobs))
+	}
+	progress, err := cmd.Flags().GetInt("progress")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if progress > 0 {
+		opts = append(opts, htindex.OptProgressNum(progress))
 	}
 	return opts
 }

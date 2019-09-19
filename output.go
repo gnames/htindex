@@ -79,7 +79,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 		if len(t.res.Names) == 0 {
 			continue
 		}
-		if hti.reportNum > 0 && count%hti.reportNum == 0 {
+		if hti.progressNum > 0 && count%hti.progressNum == 0 {
 			rate := float64(count) / (time.Since(ts).Minutes())
 			log.Printf("Processing %dth title. Rate %0.2f titles/min\n", count, rate)
 		}

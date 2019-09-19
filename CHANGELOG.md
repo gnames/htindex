@@ -2,7 +2,12 @@
 
 ## Unreleased
 
+## [v0.0.2]
+
+- Add [#11]: Add flag for number of titles in a progress report line.
+- Add [#10]: Add tests using publid data from HathiTrust.
 - Add [#7]: Save metainformation about titles.
+- Fix [#9]: Index is out of range in gnfinder.
 
 ## [v0.0.1]
 
@@ -17,8 +22,13 @@
 
 This document follows [changelog guidelines]
 
+[v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#11]: https://github.com/gnames/htindex/issues/11
+[#10]: https://github.com/gnames/htindex/issues/10
+[#9]: https://github.com/gnames/htindex/issues/9
+[#8]: https://github.com/gnames/htindex/issues/8
 [#7]: https://github.com/gnames/htindex/issues/7
 [#6]: https://github.com/gnames/htindex/issues/6
 [#5]: https://github.com/gnames/htindex/issues/5

@@ -14,6 +14,6 @@ Root: /opt/ht
 # occurances of scientific names.
 Output: /tmp/output
 
-# ReportNum tells how many titles have to be processed before sending a
+# ProgressNum tells how many titles have to be processed before sending a
 # progress report to the STDOUT. If the number is 0 reports do not generate.
-ReportNum: 10000
+ProgressNum: 10000
