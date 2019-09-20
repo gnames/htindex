@@ -1,4 +1,4 @@
-package htindex_test
+package htindex
 
 import (
 	"testing"

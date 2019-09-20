@@ -3,6 +3,7 @@ package htindex
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/gnames/gnfinder/dict"
 )
@@ -74,7 +75,12 @@ func OptOutput(s string) Option {
 // NewHTindex creates HTindex instance with several defaults. If
 // a some options are provided, they will override default settings.
 func NewHTindex(opts ...Option) (*HTindex, error) {
-	hti := &HTindex{dict: dict.LoadDictionary(), progressNum: 0}
+
+	hti := &HTindex{
+		dict:        dict.LoadDictionary(),
+		progressNum: 0,
+		jobsNum:     runtime.NumCPU(),
+	}
 	for _, opt := range opts {
 		opt(hti)
 	}
