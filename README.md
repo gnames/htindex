@@ -65,8 +65,8 @@ contain error log and results data.
 
 `-p, --progress`
 : Takes a positive integer. Sets the number of titles in a batch. After each
-batch there will be a message in the output that states how many titles are
-processed and the rate in titles per minute.
+batch, there will be a message in the output, that states how many titles are
+processed and the rate (titles per minute).
 
 `-r, --root`
 : Takes a string. Sets a root path to add to the input file data. This creates
