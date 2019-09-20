@@ -64,7 +64,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 		"TimeStamp", "ID", "PageID", "Verbatim", "NameString", "OffsetStart",
 		"OffsetEnd", "Odds", "Kind", "EndsNextPage",
 	})
-	tf.Write([]string{"ID", "Path", "PagesNumber"})
+	tf.Write([]string{"ID", "Path", "PagesNumber", "NamesOccurences"})
 
 	defer f.Close()
 	defer titles.Close()
