@@ -8,7 +8,7 @@ import (
 	"github.com/gnames/gnfinder/dict"
 )
 
-// HTindex detects occurances of scientific names in Hathi Trust data.
+// HTindex detects occurences of scientific names in Hathi Trust data.
 type HTindex struct {
 	// rootPrefix is concatenated with paths given in input file to get
 	// complete path to HathiTrust files.
@@ -55,7 +55,7 @@ func OptRoot(s string) Option {
 	}
 }
 
-// OptIntput is an absolute path to input data file. each line of such file
+// OptIntput is an absolute path to input data file. Each line of such file
 // displays path to zipped file of a title.
 func OptInput(s string) Option {
 	return func(h *HTindex) {

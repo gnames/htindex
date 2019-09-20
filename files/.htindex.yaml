@@ -11,7 +11,7 @@ Input: /home/ht/input.txt
 Root: /opt/ht
 
 # Path to the output directory. This directory will contain files with
-# occurances of scientific names.
+# occurences of scientific names.
 Output: /tmp/output
 
 # ProgressNum tells how many titles have to be processed before sending a
