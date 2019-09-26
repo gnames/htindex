@@ -27,19 +27,19 @@ type detectedName struct {
 }
 
 // outputError outputs errors arrived from the name-finding process.
-func (hti *HTindex) outputError(errCh <-chan error, wgOut *sync.WaitGroup) {
-	f, err := os.Create(filepath.Join(hti.outputPath, "errors.csv"))
+func (hti *HTindex) outputError(errCh <-chan *htiError, wgOut *sync.WaitGroup) {
+	f, err := os.Create(filepath.Join(hti.OutputPath, "errors.csv"))
 	defer wgOut.Done()
 	if err != nil {
 		log.Fatal(err)
 	}
 	ef := csv.NewWriter(f)
-	ef.Write([]string{"TimeStamp", "Error"})
+	ef.Write([]string{"TimeStamp", "TitleID", "PageID", "Error"})
 	defer f.Close()
 	defer ef.Flush()
 	for e := range errCh {
-		ef.Write([]string{ts(), e.Error()})
-		log.Println(e.Error())
+		ef.Write([]string{e.ts, e.titleID, e.pageID, e.msg})
+		log.Printf("Error: %s %s", e.titleID, e.msg)
 	}
 }
 
@@ -49,11 +49,11 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	count := 0
 	ts := time.Now()
 
-	f, err := os.Create(filepath.Join(hti.outputPath, "results.csv"))
+	f, err := os.Create(filepath.Join(hti.OutputPath, "results.csv"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	titles, err := os.Create(filepath.Join(hti.outputPath, "titles.csv"))
+	titles, err := os.Create(filepath.Join(hti.OutputPath, "titles.csv"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,7 +79,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 		if len(t.res.Names) == 0 {
 			continue
 		}
-		if hti.progressNum > 0 && count%hti.progressNum == 0 {
+		if hti.ProgressNum > 0 && count%hti.ProgressNum == 0 {
 			rate := float64(count) / (time.Since(ts).Minutes())
 			log.Printf("Processing %dth title. Rate %0.2f titles/min\n", count, rate)
 		}

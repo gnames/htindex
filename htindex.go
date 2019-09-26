@@ -10,20 +10,20 @@ import (
 
 // HTindex detects occurences of scientific names in Hathi Trust data.
 type HTindex struct {
-	// rootPrefix is concatenated with paths given in input file to get
+	// RootPrefix is concatenated with paths given in input file to get
 	// complete path to HathiTrust files.
-	rootPrefix string
-	// inputPath gives path to file with input data.
-	inputPath string
-	// outputPath gives path to a directory to keep output data.
-	outputPath string
-	// jobsNum sets number of jobs/workers to run.
-	jobsNum int
-	// dict contains shared dictionary for name finding.
-	dict *dict.Dictionary
-	// progressNum determines how many titles should be processed for
+	RootPrefix string
+	// InputPath gives path to file with input data.
+	InputPath string
+	// OutputPath gives path to a directory to keep output data.
+	OutputPath string
+	// JobsNum sets number of jobs/workers to run.
+	JobsNum int
+	// Dict contains shared dictionary for name finding.
+	Dict *dict.Dictionary
+	// ProgressNum determines how many titles should be processed for
 	// a progress report.
-	progressNum int
+	ProgressNum int
 }
 
 // Option sets the time for all options received during creation of new instance
@@ -33,7 +33,7 @@ type Option func(h *HTindex)
 // OptJobs sets number of jobs/workers to run duing execution.
 func OptJobs(i int) Option {
 	return func(h *HTindex) {
-		h.jobsNum = i
+		h.JobsNum = i
 	}
 }
 
@@ -42,7 +42,7 @@ func OptJobs(i int) Option {
 // progress is shows after every 10th title.
 func OptProgressNum(i int) Option {
 	return func(h *HTindex) {
-		h.progressNum = i
+		h.ProgressNum = i
 	}
 
 }
@@ -51,7 +51,7 @@ func OptProgressNum(i int) Option {
 // with a path provided in the input file to receive complete absolute path.
 func OptRoot(s string) Option {
 	return func(h *HTindex) {
-		h.rootPrefix = s
+		h.RootPrefix = s
 	}
 }
 
@@ -59,7 +59,7 @@ func OptRoot(s string) Option {
 // displays path to zipped file of a title.
 func OptInput(s string) Option {
 	return func(h *HTindex) {
-		h.inputPath = s
+		h.InputPath = s
 	}
 }
 
@@ -68,7 +68,7 @@ func OptInput(s string) Option {
 // initialization of HTindex instance.
 func OptOutput(s string) Option {
 	return func(h *HTindex) {
-		h.outputPath = s
+		h.OutputPath = s
 	}
 }
 
@@ -77,9 +77,9 @@ func OptOutput(s string) Option {
 func NewHTindex(opts ...Option) (*HTindex, error) {
 
 	hti := &HTindex{
-		dict:        dict.LoadDictionary(),
-		progressNum: 0,
-		jobsNum:     runtime.NumCPU(),
+		Dict:        dict.LoadDictionary(),
+		ProgressNum: 0,
+		JobsNum:     runtime.NumCPU(),
 	}
 	for _, opt := range opts {
 		opt(hti)
@@ -89,12 +89,12 @@ func NewHTindex(opts ...Option) (*HTindex, error) {
 }
 
 func (hti *HTindex) setOutputDir() error {
-	path, err := os.Stat(hti.outputPath)
+	path, err := os.Stat(hti.OutputPath)
 	if os.IsNotExist(err) {
-		return os.MkdirAll(hti.outputPath, 0755)
+		return os.MkdirAll(hti.OutputPath, 0755)
 	}
 	if path.Mode().IsRegular() {
-		return fmt.Errorf("'%s' is a file, not a directory", hti.outputPath)
+		return fmt.Errorf("'%s' is a file, not a directory", hti.OutputPath)
 	}
 	return nil
 }

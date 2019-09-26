@@ -2,10 +2,14 @@
 
 ## Unreleased
 
+## [v0.0.3]
+
+- Add [#12]: Register an error if no pages found in a title.
+
 ## [v0.0.2]
 
-- Add [#11]: Add flag for number of titles in a progress report line.
-- Add [#10]: Add tests using public data from HathiTrust.
+- Add [#11]: Flag for number of titles in a progress report line.
+- Add [#10]: Fests using public data from HathiTrust.
 - Add [#7]: Save metainformation about titles.
 - Fix [#9]: Index is out of range in gnfinder.
 
@@ -22,9 +26,11 @@
 
 This document follows [changelog guidelines]
 
+[v0.0.3]: https://github.com/gnames/htindex/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#12]: https://github.com/gnames/htindex/issues/11
 [#11]: https://github.com/gnames/htindex/issues/11
 [#10]: https://github.com/gnames/htindex/issues/10
 [#9]: https://github.com/gnames/htindex/issues/9

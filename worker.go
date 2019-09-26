@@ -40,6 +40,13 @@ type title struct {
 	res   *output.Output
 }
 
+type htiError struct {
+	ts      string
+	titleID string
+	pageID  string
+	msg     string
+}
+
 // byID allows to sort pageContent slice using its `id` field.
 type byID []*pageContent
 
@@ -52,11 +59,11 @@ func (b byID) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 // the output. In case if some errors happened during processing, they will be
 // prepared for logging.
 func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
-	errCh chan<- error, wg *sync.WaitGroup) {
+	errCh chan<- *htiError, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	opts := []gnfinder.Option{
-		gnfinder.OptDict(hti.dict),
+		gnfinder.OptDict(hti.Dict),
 		gnfinder.OptBayes(true),
 	}
 	gnf := gnfinder.NewGNfinder(opts...)
@@ -65,9 +72,14 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 		offset := 0
 		var pages []*tpage
 		t := title{id: getID(zipPath), path: zipPath, pages: pages}
-		r, err := zip.OpenReader(filepath.Join(hti.rootPrefix, zipPath))
+		r, err := zip.OpenReader(filepath.Join(hti.RootPrefix, zipPath))
 		if err != nil {
-			errCh <- err
+			errCh <- &htiError{msg: err.Error(), titleID: t.id, ts: ts()}
+		}
+		pcs := pagesContent(r, errCh)
+		if len(pcs) == 0 {
+			errCh <- &htiError{ts: ts(), titleID: t.id, msg: "no pages detected"}
+			continue
 		}
 
 		for _, pc := range pagesContent(r, errCh) {
@@ -86,7 +98,7 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 
 // pagesContent generates a list of all pages with their texts sorted according
 // to their position in the title.
-func pagesContent(r *zip.ReadCloser, errCh chan<- error) []*pageContent {
+func pagesContent(r *zip.ReadCloser, errCh chan<- *htiError) []*pageContent {
 	var pages []*pageContent
 	for _, f := range r.File {
 		fn := f.Name
@@ -96,12 +108,12 @@ func pagesContent(r *zip.ReadCloser, errCh chan<- error) []*pageContent {
 		}
 		zf, err := f.Open()
 		if err != nil {
-			errCh <- err
+			errCh <- &htiError{msg: err.Error()}
 		}
 		id := fn[fnl-12 : fnl-4]
 		text, err := ioutil.ReadAll(zf)
 		if err != nil {
-			errCh <- err
+			errCh <- &htiError{msg: err.Error()}
 		}
 		pages = append(pages, &pageContent{id: id, text: text})
 		zf.Close()

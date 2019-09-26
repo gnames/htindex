@@ -9,17 +9,17 @@ import (
 
 // Run is the main method for creation of the scientific names index.
 func (hti *HTindex) Run() error {
-	fmt.Printf("Processing with %d 'threads'\n", hti.jobsNum)
+	fmt.Printf("Processing with %d 'threads'\n", hti.JobsNum)
 	inCh := make(chan string)
-	errCh := make(chan error)
+	errCh := make(chan *htiError)
 	outCh := make(chan *title)
 	var wg sync.WaitGroup
 	var wgOut sync.WaitGroup
-	wg.Add(hti.jobsNum)
+	wg.Add(hti.JobsNum)
 	wgOut.Add(2)
 	go hti.outputError(errCh, &wgOut)
 	go hti.outputResult(outCh, &wgOut)
-	for i := 0; i < hti.jobsNum; i++ {
+	for i := 0; i < hti.JobsNum; i++ {
 		go hti.worker(inCh, outCh, errCh, &wg)
 	}
 	if err := hti.readInput(inCh, errCh); err != nil {
@@ -34,8 +34,9 @@ func (hti *HTindex) Run() error {
 
 // readInput traverses the input file and sends paths to title's zip files to
 // further processes.
-func (hti *HTindex) readInput(inCh chan<- string, errCh chan<- error) error {
-	file, err := os.Open(hti.inputPath)
+func (hti *HTindex) readInput(inCh chan<- string,
+	errCh chan<- *htiError) error {
+	file, err := os.Open(hti.InputPath)
 	if err != nil {
 		return err
 	}
@@ -46,7 +47,7 @@ func (hti *HTindex) readInput(inCh chan<- string, errCh chan<- error) error {
 		inCh <- scanner.Text()
 	}
 	if err := scanner.Err(); err != nil {
-		errCh <- err
+		errCh <- &htiError{msg: err.Error()}
 	}
 	return nil
 }
