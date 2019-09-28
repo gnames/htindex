@@ -39,7 +39,6 @@ func (hti *HTindex) outputError(errCh <-chan *htiError, wgOut *sync.WaitGroup) {
 	defer ef.Flush()
 	for e := range errCh {
 		ef.Write([]string{e.ts, e.titleID, e.pageID, e.msg})
-		log.Printf("Error: %s %s", e.titleID, e.msg)
 	}
 }
 
@@ -76,12 +75,12 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 			t.id, t.path, strconv.Itoa(len(t.pages)), strconv.Itoa(len(t.res.Names)),
 		})
 		count++
-		if len(t.res.Names) == 0 {
-			continue
-		}
 		if hti.ProgressNum > 0 && count%hti.ProgressNum == 0 {
 			rate := float64(count) / (time.Since(ts).Minutes())
 			log.Printf("Processing %dth title. Rate %0.2f titles/min\n", count, rate)
+		}
+		if len(t.res.Names) == 0 {
+			continue
 		}
 		names := generateNamesOutput(t)
 		for _, n := range names {
