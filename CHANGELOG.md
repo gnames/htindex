@@ -4,6 +4,7 @@
 
 ## [v0.0.3]
 
+- Add [#13]: Speedup by adding Bayes training data preload.
 - Add [#12]: Register an error if no pages found in a title.
 
 ## [v0.0.2]
@@ -30,7 +31,8 @@ This document follows [changelog guidelines]
 [v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
-[#12]: https://github.com/gnames/htindex/issues/11
+[#13]: https://github.com/gnames/htindex/issues/13
+[#12]: https://github.com/gnames/htindex/issues/12
 [#11]: https://github.com/gnames/htindex/issues/11
 [#10]: https://github.com/gnames/htindex/issues/10
 [#9]: https://github.com/gnames/htindex/issues/9
