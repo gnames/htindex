@@ -39,7 +39,7 @@ var _ = Describe("Htindex", func() {
 		})
 
 		// Issue #12
-		It("reports about volumes that do not have expected page names", func() {
+		It("reports about volumes that have no standard pages", func() {
 			stdout := os.Stdout
 			os.Stdout, _ = os.Open(os.DevNull)
 			hti, _ := NewHTindex(initOpts()...)
@@ -49,9 +49,34 @@ var _ = Describe("Htindex", func() {
 
 			res, ok := errs["yale.39002007302079"]
 			Expect(ok).To(BeTrue())
+			Expect(res.msg).To(Equal("non-standard naming for 75 pages"))
+			os.Stdout = stdout
+		})
+
+		It("reports about volumes that have no pages", func() {
+			stdout := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			hti, _ := NewHTindex(initOpts()...)
+			Expect(hti.Run()).To(Succeed())
+			errs, err := readErrors(hti.OutputPath)
+			Expect(err).To(BeNil())
+
+			res, ok := errs["yale.empty"]
+			Expect(ok).To(BeTrue())
 			Expect(res.msg).To(Equal("no pages detected"))
 			os.Stdout = stdout
 		})
+
+		Measure("Going through titles fast enough", func(b Benchmarker) {
+			stdout := os.Stdout
+			os.Stdout, _ = os.Open(os.DevNull)
+			runtime := b.Time("runtime", func() {
+				hti, _ := NewHTindex(initOpts()...)
+				Expect(hti.Run()).To(Succeed())
+				os.Stdout = stdout
+			})
+			Expect(runtime.Seconds()).To(BeNumerically("<", 5.0), "took too long to run")
+		}, 3)
 	})
 })
 
@@ -92,9 +117,9 @@ func readErrors(path string) (map[string]*htiError, error) {
 }
 
 func initOpts() []Option {
-	root, err := filepath.Abs("./test-data")
+	root, err := filepath.Abs("./testdata")
 	Expect(err).ToNot(HaveOccurred())
-	input, err := filepath.Abs("./test-data/input_paths_small.txt")
+	input, err := filepath.Abs("./testdata/input_paths_small.txt")
 	Expect(err).To(BeNil())
 	opts := []Option{
 		OptJobs(15),

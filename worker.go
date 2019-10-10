@@ -15,29 +15,23 @@ import (
 )
 
 // isPage determines if a file represents a page with text from the title.
-var isPage = regexp.MustCompile(`\d{8}\.txt`)
+var isPage = regexp.MustCompile(`\d{6}\.txt`)
 
-// pageContent allows to presort pages from zip file in case if they are given
+// page allows to presort pages from zip file in case if they are given
 // in a wrong order.
-type pageContent struct {
+type page struct {
 	id   string
 	text []byte
-}
-
-// tpage represents metadata of a page from a title.
-type tpage struct {
-	id         string
-	offset     int
-	offsetNext int
+	res  *output.Output
 }
 
 // title represents data and metadata from a title/book/volume.
 type title struct {
-	id    string
-	path  string
-	pages []*tpage
-	text  []byte
-	res   *output.Output
+	id               string
+	path             string
+	pages            []*page
+	namesNum         int
+	pagesNumBadNames int
 }
 
 type htiError struct {
@@ -47,8 +41,8 @@ type htiError struct {
 	msg     string
 }
 
-// byID allows to sort pageContent slice using its `id` field.
-type byID []*pageContent
+// byID allows to sort page slice using its `id` field.
+type byID []page
 
 func (b byID) Len() int           { return len(b) }
 func (b byID) Less(i, j int) bool { return b[i].id < b[j].id }
@@ -69,37 +63,38 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 	gnf := gnfinder.NewGNfinder(opts...)
 
 	for zipPath := range inCh {
-		offset := 0
-		var pages []*tpage
+		var pages []*page
 		t := title{id: getID(zipPath), path: zipPath, pages: pages}
 		r, err := zip.OpenReader(filepath.Join(hti.RootPrefix, zipPath))
 		if err != nil {
 			errCh <- &htiError{msg: err.Error(), titleID: t.id, ts: ts()}
 		}
-		pcs := pagesContent(r, errCh)
+		pcs, pagesNumBadNames := pagesContent(r, errCh)
+		if pagesNumBadNames > 0 {
+			msg := fmt.Sprintf("non-standard naming for %d pages", pagesNumBadNames)
+			errCh <- &htiError{msg: msg, titleID: t.id, ts: ts()}
+		}
+		t.pagesNumBadNames = pagesNumBadNames
 		if len(pcs) == 0 {
 			errCh <- &htiError{ts: ts(), titleID: t.id, msg: "no pages detected"}
 			continue
 		}
 
-		for _, pc := range pagesContent(r, errCh) {
-			p := tpage{id: pc.id, offset: offset}
-			pageUTF := []rune(string(pc.text))
-			offset += len(pageUTF)
-			p.offsetNext = offset
-			t.pages = append(t.pages, &p)
-			t.text = append(t.text, pc.text...)
+		for _, pc := range pcs {
+			pc.res = gnf.FindNames(pc.text)
+			t.namesNum += len(pc.res.Names)
+			t.pages = append(t.pages, &pc)
 		}
 		r.Close()
-		t.res = gnf.FindNames(t.text)
 		outCh <- &t
 	}
 }
 
 // pagesContent generates a list of all pages with their texts sorted according
 // to their position in the title.
-func pagesContent(r *zip.ReadCloser, errCh chan<- *htiError) []*pageContent {
-	var pages []*pageContent
+func pagesContent(r *zip.ReadCloser, errCh chan<- *htiError) ([]page, int) {
+	badPageName := 0
+	var pages []page
 	for _, f := range r.File {
 		fn := f.Name
 		fnl := len(fn)
@@ -111,15 +106,18 @@ func pagesContent(r *zip.ReadCloser, errCh chan<- *htiError) []*pageContent {
 			errCh <- &htiError{msg: err.Error()}
 		}
 		id := fn[fnl-12 : fnl-4]
+		if !strings.HasSuffix(id, "00") {
+			badPageName++
+		}
 		text, err := ioutil.ReadAll(zf)
 		if err != nil {
 			errCh <- &htiError{msg: err.Error()}
 		}
-		pages = append(pages, &pageContent{id: id, text: text})
+		pages = append(pages, page{id: id, text: text})
 		zf.Close()
 	}
 	sort.Sort(byID(pages))
-	return pages
+	return pages, badPageName
 }
 
 // getID generates the id of a title from its filepath.

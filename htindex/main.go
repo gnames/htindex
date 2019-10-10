@@ -20,7 +20,9 @@
 
 package main
 
-import "github.com/gnames/htindex/htindex/cmd"
+import (
+	"github.com/gnames/htindex/htindex/cmd"
+)
 
 var (
 	buildVersion string

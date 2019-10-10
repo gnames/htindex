@@ -15,15 +15,14 @@ import (
 // detectedName holds information about a name-string returned by a
 // name-finder.
 type detectedName struct {
-	pageID       string
-	verbatim     string
-	nameString   string
-	offsetStart  int
-	offsetEnd    int
-	endsNextPage int
-	odds         float64
-	kind         string
-	timestamp    string
+	pageID      string
+	verbatim    string
+	nameString  string
+	offsetStart int
+	offsetEnd   int
+	odds        float64
+	kind        string
+	timestamp   string
 }
 
 // outputError outputs errors arrived from the name-finding process.
@@ -61,9 +60,9 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	tf := csv.NewWriter(titles)
 	of.Write([]string{
 		"TimeStamp", "ID", "PageID", "Verbatim", "NameString", "OffsetStart",
-		"OffsetEnd", "Odds", "Kind", "EndsNextPage",
+		"OffsetEnd", "Odds", "Kind",
 	})
-	tf.Write([]string{"ID", "Path", "PagesNumber", "NamesOccurences"})
+	tf.Write([]string{"ID", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
 
 	defer f.Close()
 	defer titles.Close()
@@ -72,27 +71,32 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 
 	for t := range outCh {
 		tf.Write([]string{
-			t.id, t.path, strconv.Itoa(len(t.pages)), strconv.Itoa(len(t.res.Names)),
+			t.id, t.path, strconv.Itoa(len(t.pages)),
+			strconv.Itoa(t.pagesNumBadNames), strconv.Itoa(t.namesNum),
 		})
+
 		count++
 		if hti.ProgressNum > 0 && count%hti.ProgressNum == 0 {
 			rate := float64(count) / (time.Since(ts).Minutes())
 			log.Printf("Processing %dth title. Rate %0.2f titles/min\n", count, rate)
 		}
-		if len(t.res.Names) == 0 {
+		if t.namesNum == 0 {
 			continue
 		}
-		names := generateNamesOutput(t)
-		for _, n := range names {
-			out := []string{
-				n.timestamp, t.id, n.pageID, n.verbatim, n.nameString,
-				strconv.Itoa(n.offsetStart), strconv.Itoa(n.offsetEnd),
-				strconv.Itoa(int(n.odds)), n.kind, strconv.Itoa(n.endsNextPage),
+		for _, p := range t.pages {
+			for _, name := range p.res.Names {
+				n := newDetectedName(p, name)
+				out := []string{
+					n.timestamp, t.id, n.pageID, n.verbatim, n.nameString,
+					strconv.Itoa(n.offsetStart), strconv.Itoa(n.offsetEnd),
+					strconv.Itoa(int(n.odds)), n.kind,
+				}
+				of.Write(out)
+
+				if err := of.Error(); err != nil {
+					log.Fatal(err)
+				}
 			}
-			of.Write(out)
-		}
-		if err := of.Error(); err != nil {
-			log.Fatal(err)
 		}
 	}
 }
@@ -105,48 +109,16 @@ func ts() string {
 
 // newDetectedName processes output from name-finding to prepare it for
 // htindex output.
-func newDetectedName(p *tpage, n output.Name) *detectedName {
-	var endsNextPage int
-	var end int
-	start := n.OffsetStart - p.offset
-	if n.OffsetEnd < p.offsetNext {
-		end = n.OffsetEnd - p.offset
-	} else {
-		end = n.OffsetEnd - p.offsetNext
-		endsNextPage = 1
-	}
+func newDetectedName(p *page, n output.Name) detectedName {
 	dn := detectedName{
-		pageID:       p.id,
-		verbatim:     n.Verbatim,
-		nameString:   n.Name,
-		offsetStart:  start,
-		offsetEnd:    end,
-		endsNextPage: endsNextPage,
-		odds:         n.Odds,
-		kind:         n.Type,
-		timestamp:    ts(),
+		pageID:      p.id,
+		verbatim:    n.Verbatim,
+		nameString:  n.Name,
+		offsetStart: n.OffsetStart,
+		offsetEnd:   n.OffsetEnd,
+		odds:        n.Odds,
+		kind:        n.Type,
+		timestamp:   ts(),
 	}
-	return &dn
-}
-
-// generateNamesOutput splits results by pages, instead of by title.
-func generateNamesOutput(t *title) []*detectedName {
-	ns := make([]*detectedName, len(t.res.Names))
-	j := 0
-	name := t.res.Names[j]
-	for _, page := range t.pages {
-		for {
-			if name.OffsetStart <= page.offsetNext {
-				ns[j] = newDetectedName(page, name)
-				j++
-				if j >= len(t.res.Names) {
-					return ns
-				}
-				name = t.res.Names[j]
-			} else {
-				break
-			}
-		}
-	}
-	return ns
+	return dn
 }

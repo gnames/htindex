@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.0.4]
+
+- Add [#14]: Firther performance optimizations.
+
 ## [v0.0.3]
 
 - Add [#13]: Speedup by adding Bayes training data preload.
@@ -27,10 +31,12 @@
 
 This document follows [changelog guidelines]
 
+[v0.0.4]: https://github.com/gnames/htindex/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/gnames/htindex/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#14]: https://github.com/gnames/htindex/issues/14
 [#13]: https://github.com/gnames/htindex/issues/13
 [#12]: https://github.com/gnames/htindex/issues/12
 [#11]: https://github.com/gnames/htindex/issues/11
