@@ -1,7 +1,7 @@
 # htindex
 
 The purpose of `htindex` is to create an index of scientific names in
-HathiTrust Digital Library. This library contains large amount of scientific
+[HathiTrust Digital Library]. This library contains large amount of scientific
 literature (40% public, 60% private). This program will allow to add
 biodiversity information to their metadata. It will make possible to search
 their corpus by scientific names.
@@ -86,3 +86,4 @@ Released under [MIT license]
 [example .htindex.yaml file]: https://raw.githubusercontent.com/gnames/htindex/master/files/.htindex.yaml
 [MIT license]: https://raw.githubusercontent.com/gnames/htindex/master/LICENSE
 [latest release]: https://github.com/gnames/htindex/releases/latest
+[HathiTrust Digital Library]: https://www.hathitrust.org/

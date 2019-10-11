@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/gnames/gnfinder"
+	"github.com/gnames/gnfinder/lang"
 	"github.com/gnames/gnfinder/output"
 )
 
@@ -29,7 +30,7 @@ type page struct {
 type title struct {
 	id               string
 	path             string
-	pages            []*page
+	pages            []page
 	namesNum         int
 	pagesNumBadNames int
 }
@@ -59,17 +60,18 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 	opts := []gnfinder.Option{
 		gnfinder.OptDict(hti.Dict),
 		gnfinder.OptBayes(true),
+		gnfinder.OptLanguage(lang.English),
 	}
 	gnf := gnfinder.NewGNfinder(opts...)
 
 	for zipPath := range inCh {
-		var pages []*page
-		t := title{id: getID(zipPath), path: zipPath, pages: pages}
+		t := title{id: getID(zipPath), path: zipPath}
 		r, err := zip.OpenReader(filepath.Join(hti.RootPrefix, zipPath))
 		if err != nil {
 			errCh <- &htiError{msg: err.Error(), titleID: t.id, ts: ts()}
 		}
 		pcs, pagesNumBadNames := pagesContent(r, errCh)
+		t.pages = make([]page, len(pcs))
 		if pagesNumBadNames > 0 {
 			msg := fmt.Sprintf("non-standard naming for %d pages", pagesNumBadNames)
 			errCh <- &htiError{msg: msg, titleID: t.id, ts: ts()}
@@ -79,11 +81,10 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 			errCh <- &htiError{ts: ts(), titleID: t.id, msg: "no pages detected"}
 			continue
 		}
-
-		for _, pc := range pcs {
-			pc.res = gnf.FindNames(pc.text)
-			t.namesNum += len(pc.res.Names)
-			t.pages = append(t.pages, &pc)
+		for i, p := range pcs {
+			t.pages[i].id = p.id
+			t.pages[i].res = gnf.FindNames(p.text)
+			t.namesNum += len(t.pages[i].res.Names)
 		}
 		r.Close()
 		outCh <- &t

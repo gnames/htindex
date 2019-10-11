@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [v0.0.6]
+
+- Fix [#17]: Output is broken, many records repeat many times.
+
 ## [v0.0.5]
 
 - Fix [#16]: Wrong bad pages names detection.
@@ -36,12 +40,14 @@
 
 This document follows [changelog guidelines]
 
+[v0.0.6]: https://github.com/gnames/htindex/compare/v0.0.5...v0.0.6
 [v0.0.5]: https://github.com/gnames/htindex/compare/v0.0.4...v0.0.5
 [v0.0.4]: https://github.com/gnames/htindex/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/gnames/htindex/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#17]: https://github.com/gnames/htindex/issues/17
 [#16]: https://github.com/gnames/htindex/issues/16
 [#15]: https://github.com/gnames/htindex/issues/15
 [#14]: https://github.com/gnames/htindex/issues/14

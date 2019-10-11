@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -24,7 +25,7 @@ var _ = Describe("Htindex", func() {
 
 		It("can read options", func() {
 			hti, _ := NewHTindex(initOpts()...)
-			Expect(hti.JobsNum).To(Equal(15))
+			Expect(hti.JobsNum).To(Equal(4))
 			Expect(hti.OutputPath).To(Equal(testOutput))
 		})
 	})
@@ -35,6 +36,10 @@ var _ = Describe("Htindex", func() {
 			os.Stdout, _ = os.Open(os.DevNull)
 			hti, _ := NewHTindex(initOpts()...)
 			Expect(hti.Run()).To(Succeed())
+			// Issue #17 repetition of the same occurence many times in results
+			hasRepetitions, err := hasRepetitions(hti)
+			Expect(err).To(BeNil())
+			Expect(hasRepetitions).To(BeFalse())
 			os.Stdout = stdout
 		})
 
@@ -49,7 +54,7 @@ var _ = Describe("Htindex", func() {
 
 			res, ok := errs["yale.39002007302079"]
 			Expect(ok).To(BeTrue())
-			Expect(res.msg).To(Equal("non-standard naming for 75 pages"))
+			Expect(res.msg).To(Equal("non-standard naming for 76 pages"))
 			os.Stdout = stdout
 		})
 
@@ -122,10 +127,68 @@ func initOpts() []Option {
 	input, err := filepath.Abs("./testdata/input_paths_small.txt")
 	Expect(err).To(BeNil())
 	opts := []Option{
-		OptJobs(15),
+		OptJobs(4),
 		OptOutput("/tmp/htindex-test"),
 		OptRoot(root),
 		OptInput(input),
 	}
 	return opts
+}
+
+func hasRepetitions(hti *HTindex) (bool, error) {
+	path := filepath.Join(hti.OutputPath, "results.csv")
+	f, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+	r := csv.NewReader(f)
+	ls, err := r.ReadAll()
+	if err != nil {
+		return false, err
+	}
+	if len(ls) < 200 {
+		return false, fmt.Errorf("Result is too small: %d rows", len(ls))
+	}
+
+	indexID, indexPageID, indexOffsetStart, err := fieldIndices(ls[0])
+	if err != nil {
+		return false, err
+	}
+	data := make(map[string]struct{})
+	for _, v := range ls[1:] {
+		indices := []string{v[indexID], v[indexPageID], v[indexOffsetStart]}
+		key := strings.Join(indices, "|")
+		if _, ok := data[key]; ok {
+			return true, nil
+		} else {
+			data[key] = struct{}{}
+		}
+
+	}
+	return false, nil
+}
+
+func fieldIndices(h []string) (int, int, int, error) {
+	var titleID, pageID, offsetStart int
+	for i, v := range h {
+		switch v {
+		case "ID":
+			titleID = i
+		case "PageID":
+			pageID = i
+		case "OffsetStart":
+			offsetStart = i
+		default:
+			continue
+		}
+	}
+	if titleID == 0 || pageID == 0 || offsetStart == 0 {
+		err := fmt.Errorf(
+			"Some indices are 0: titleID: %d, pageID: %d, offsetStart: %d",
+			titleID, pageID, offsetStart,
+		)
+		return 0, 0, 0, err
+	}
+	return titleID, pageID, offsetStart, nil
 }

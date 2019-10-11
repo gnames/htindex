@@ -109,7 +109,7 @@ func ts() string {
 
 // newDetectedName processes output from name-finding to prepare it for
 // htindex output.
-func newDetectedName(p *page, n output.Name) detectedName {
+func newDetectedName(p page, n output.Name) detectedName {
 	dn := detectedName{
 		pageID:      p.id,
 		verbatim:    n.Verbatim,
