@@ -4,7 +4,7 @@
 
 ## [v0.0.4]
 
-- Add [#14]: Firther performance optimizations.
+- Add [#14]: Further performance optimizations.
 
 ## [v0.0.3]
 
