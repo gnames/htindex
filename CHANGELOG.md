@@ -19,7 +19,7 @@
 ## [v0.0.2]
 
 - Add [#11]: Flag for number of titles in a progress report line.
-- Add [#10]: Fests using public data from HathiTrust.
+- Add [#10]: Add tests that public data from HathiTrust.
 - Add [#7]: Save metainformation about titles.
 - Fix [#9]: Index is out of range in gnfinder.
 
