@@ -106,7 +106,7 @@ func pagesContent(r *zip.ReadCloser, errCh chan<- *htiError) ([]page, int) {
 			errCh <- &htiError{msg: err.Error()}
 		}
 		id := fn[fnl-12 : fnl-4]
-		if !strings.HasSuffix(id, "00") {
+		if !strings.HasPrefix(id, "00") {
 			badPageName++
 		}
 		text, err := ioutil.ReadAll(zf)
