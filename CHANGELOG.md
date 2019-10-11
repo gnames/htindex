@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix [#15]: Releases do not show version.
+
 ## [v0.0.4]
 
 - Add [#14]: Further performance optimizations.
@@ -36,6 +38,7 @@ This document follows [changelog guidelines]
 [v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#15]: https://github.com/gnames/htindex/issues/15
 [#14]: https://github.com/gnames/htindex/issues/14
 [#13]: https://github.com/gnames/htindex/issues/13
 [#12]: https://github.com/gnames/htindex/issues/12

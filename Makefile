@@ -13,7 +13,7 @@ LDFLAGS=-ldflags "-X main.buildDate=${DATE} -X main.buildVersion=${VERSION}"
 
 all: install
 
-build: grpc
+build:
 	cd htindex && \
 	$(GOCLEAN) && \
 	GO111MODULE=on GOOS=linux GOARCH=amd64 $(GOBUILD) ${LDFLAGS}
@@ -25,9 +25,9 @@ install:
 release:
 	cd htindex; \
 	$(GOCLEAN); \
-	$(FLAGS_LINUX) $(GOBUILD); \
+	$(FLAGS_LINUX) $(GOBUILD) ${LDFLAGS}; \
 	tar zcf /tmp/htindex-$(VER)-linux.tar.gz htindex; \
 	$(GOCLEAN); \
-	$(FLAGS_MAC) $(GOBUILD); \
+	$(FLAGS_MAC) $(GOBUILD) ${LDFLAGS}; \
 	tar zcf /tmp/htindex-$(VER)-mac.tar.gz htindex; \
 	$(GOCLEAN);
