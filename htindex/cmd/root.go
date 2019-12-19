@@ -134,9 +134,6 @@ func getOpts() []htindex.Option {
 	if cfg.Jobs > 0 {
 		opts = append(opts, htindex.OptJobs(cfg.Jobs))
 	}
-	if cfg.Jobs > 0 {
-		opts = append(opts, htindex.OptJobs(cfg.Jobs))
-	}
 	if cfg.ProgressNum > 0 {
 		opts = append(opts, htindex.OptProgressNum(cfg.ProgressNum))
 	}
