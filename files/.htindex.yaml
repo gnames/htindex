@@ -2,7 +2,7 @@
 
 # Number of workers(jobs) to run indexing. As a start, try
 # num_of_cpu_or_threads * 3.
-jobs: 50
+Jobs: 50
 
 # Path to a file with input data.
 Input: /home/ht/input.txt
@@ -13,6 +13,9 @@ Root: /opt/ht
 # Path to the output directory. This directory will contain files with
 # occurences of scientific names.
 Output: /tmp/output
+
+# Number of words to surround every name-candidate
+WordsAround: 0
 
 # ProgressNum tells how many titles have to be processed before sending a
 # progress report to the STDOUT. If the number is 0 reports do not generate.

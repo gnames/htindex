@@ -36,10 +36,12 @@ var _ = Describe("Htindex", func() {
 			os.Stdout, _ = os.Open(os.DevNull)
 			hti, _ := NewHTindex(initOpts()...)
 			Expect(hti.Run()).To(Succeed())
+			data := getTestData(hti.OutputPath)
 			// Issue #17 repetition of the same occurence many times in results
 			hasRepetitions, err := hasRepetitions(hti)
 			Expect(err).To(BeNil())
 			Expect(hasRepetitions).To(BeFalse())
+			Expect(hasWordsAround(data)).To(BeTrue())
 			os.Stdout = stdout
 		})
 
@@ -85,11 +87,77 @@ var _ = Describe("Htindex", func() {
 	})
 })
 
+type testField int
+
+const (
+	timeStampF testField = iota
+	idF
+	pageIDF
+	verbatimF
+	nameStringF
+	offsetStartF
+	offsetEndF
+	wordsBeforeF
+	wordsAfterF
+	oddsF
+	kindF
+)
+
+type testData struct {
+	TimeStamp   string
+	ID          string
+	PageID      string
+	Verbatim    string
+	NameString  string
+	OffsetStart string
+	OffsetEnd   string
+	WordsBefore string
+	WordsAfter  string
+	Odds        string
+	Kind        string
+}
+
 type htiError struct {
 	ts      string
 	titleID string
 	pageID  string
 	msg     string
+}
+
+func getTestData(path string) []testData {
+	var res []testData
+	resPath := filepath.Join(path, "results.csv")
+	f, err := os.Open(resPath)
+	Expect(err).To(BeNil())
+	reader := csv.NewReader(f)
+	count := 0
+	for {
+		count++
+		v, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if count == 1 {
+			continue
+		}
+		Expect(err).To(BeNil())
+		datum := testData{
+			TimeStamp:   v[timeStampF],
+			ID:          v[idF],
+			PageID:      v[pageIDF],
+			Verbatim:    v[verbatimF],
+			NameString:  v[nameStringF],
+			OffsetStart: v[offsetStartF],
+			OffsetEnd:   v[offsetEndF],
+			WordsBefore: v[wordsBeforeF],
+			WordsAfter:  v[wordsAfterF],
+			Odds:        v[oddsF],
+			Kind:        v[kindF],
+		}
+		res = append(res, datum)
+	}
+
+	return res
 }
 
 func readErrors(path string) (map[string]*htiError, error) {
@@ -109,7 +177,6 @@ func readErrors(path string) (map[string]*htiError, error) {
 			continue
 		}
 		Expect(err).To(BeNil())
-		fmt.Println(v)
 		res[v[1]] = &htiError{
 			ts:      v[0],
 			titleID: v[1],
@@ -128,6 +195,7 @@ func initOpts() []Option {
 	Expect(err).To(BeNil())
 	opts := []Option{
 		OptJobs(4),
+		OptWordsAround(5),
 		OptOutput("/tmp/htindex-test"),
 		OptRoot(root),
 		OptInput(input),
@@ -167,6 +235,17 @@ func hasRepetitions(hti *HTindex) (bool, error) {
 
 	}
 	return false, nil
+}
+
+func hasWordsAround(data []testData) bool {
+	for _, d := range data {
+		if len(d.WordsBefore) > 0 && len(d.WordsAfter) > 0 &&
+			strings.Contains(d.WordsBefore, "|") &&
+			strings.Contains(d.WordsAfter, "|") {
+			return true
+		}
+	}
+	return false
 }
 
 func fieldIndices(h []string) (int, int, int, error) {

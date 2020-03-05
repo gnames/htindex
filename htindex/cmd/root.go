@@ -25,6 +25,7 @@ type config struct {
 	Input       string
 	Output      string
 	Jobs        int
+	WordsAround int
 	ProgressNum int
 }
 
@@ -69,6 +70,7 @@ func init() {
 	rootCmd.Flags().StringP("input", "i", "", "path to the input data file")
 	rootCmd.Flags().StringP("output", "o", "", "path to the output directory")
 	rootCmd.Flags().IntP("jobs", "j", 0, "number of workers (jobs)")
+	rootCmd.Flags().IntP("words-around", "w", 0, "keep this number of words before and after a name")
 	rootCmd.Flags().IntP("progress", "p", 0, "number of titles in progress report")
 }
 
@@ -134,6 +136,9 @@ func getOpts() []htindex.Option {
 	if cfg.Jobs > 0 {
 		opts = append(opts, htindex.OptJobs(cfg.Jobs))
 	}
+	if cfg.WordsAround > 0 {
+		opts = append(opts, htindex.OptWordsAround(cfg.WordsAround))
+	}
 	if cfg.ProgressNum > 0 {
 		opts = append(opts, htindex.OptProgressNum(cfg.ProgressNum))
 	}
@@ -173,6 +178,14 @@ func getFlags(opts []htindex.Option, cmd *cobra.Command) []htindex.Option {
 	}
 	if jobs > 0 {
 		opts = append(opts, htindex.OptJobs(jobs))
+	}
+	words, err := cmd.Flags().GetInt("words-around")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if words > 0 {
+		opts = append(opts, htindex.OptWordsAround(words))
 	}
 	progress, err := cmd.Flags().GetInt("progress")
 	if err != nil {

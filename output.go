@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,6 +21,8 @@ type detectedName struct {
 	nameString  string
 	offsetStart int
 	offsetEnd   int
+	wordsBefore string
+	wordsAfter  string
 	odds        float64
 	kind        string
 	timestamp   string
@@ -33,11 +36,11 @@ func (hti *HTindex) outputError(errCh <-chan *htiError, wgOut *sync.WaitGroup) {
 		log.Fatal(err)
 	}
 	ef := csv.NewWriter(f)
-	ef.Write([]string{"TimeStamp", "TitleID", "PageID", "Error"})
+	_ = ef.Write([]string{"TimeStamp", "TitleID", "PageID", "Error"})
 	defer f.Close()
 	defer ef.Flush()
 	for e := range errCh {
-		ef.Write([]string{e.ts, e.titleID, e.pageID, e.msg})
+		_ = ef.Write([]string{e.ts, e.titleID, e.pageID, e.msg})
 	}
 }
 
@@ -58,11 +61,11 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 
 	of := csv.NewWriter(f)
 	tf := csv.NewWriter(titles)
-	of.Write([]string{
+	_ = of.Write([]string{
 		"TimeStamp", "ID", "PageID", "Verbatim", "NameString", "OffsetStart",
-		"OffsetEnd", "Odds", "Kind",
+		"OffsetEnd", "WordsBefore", "WordsAfter", "Odds", "Kind",
 	})
-	tf.Write([]string{"ID", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
+	_ = tf.Write([]string{"ID", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
 
 	defer f.Close()
 	defer titles.Close()
@@ -70,7 +73,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	defer tf.Flush()
 
 	for t := range outCh {
-		tf.Write([]string{
+		_ = tf.Write([]string{
 			t.id, t.path, strconv.Itoa(len(t.pages)),
 			strconv.Itoa(t.pagesNumBadNames), strconv.Itoa(t.namesNum),
 		})
@@ -89,9 +92,10 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 				out := []string{
 					n.timestamp, t.id, n.pageID, n.verbatim, n.nameString,
 					strconv.Itoa(n.offsetStart), strconv.Itoa(n.offsetEnd),
+					n.wordsBefore, n.wordsAfter,
 					strconv.Itoa(int(n.odds)), n.kind,
 				}
-				of.Write(out)
+				_ = of.Write(out)
 
 				if err := of.Error(); err != nil {
 					log.Fatal(err)
@@ -116,6 +120,8 @@ func newDetectedName(p page, n output.Name) detectedName {
 		nameString:  n.Name,
 		offsetStart: n.OffsetStart,
 		offsetEnd:   n.OffsetEnd,
+		wordsBefore: strings.Join(n.WordsBefore, "|"),
+		wordsAfter:  strings.Join(n.WordsAfter, "|"),
 		odds:        n.Odds,
 		kind:        n.Type,
 		timestamp:   ts(),

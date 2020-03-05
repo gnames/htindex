@@ -60,6 +60,7 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 	opts := []gnfinder.Option{
 		gnfinder.OptDict(hti.Dict),
 		gnfinder.OptBayes(true),
+		gnfinder.OptTokensAround(hti.WordsAround),
 		gnfinder.OptLanguage(lang.English),
 	}
 	gnf := gnfinder.NewGNfinder(opts...)

@@ -21,6 +21,9 @@ type HTindex struct {
 	JobsNum int
 	// Dict contains shared dictionary for name finding.
 	Dict *dict.Dictionary
+	// WordsAround sets number of words retained before and after a
+	// name-candidate.
+	WordsAround int
 	// ProgressNum determines how many titles should be processed for
 	// a progress report.
 	ProgressNum int
@@ -34,6 +37,14 @@ type Option func(h *HTindex)
 func OptJobs(i int) Option {
 	return func(h *HTindex) {
 		h.JobsNum = i
+	}
+}
+
+// OptWordsAround sets number of words retained before and after a
+// name-candidate.
+func OptWordsAround(w int) Option {
+	return func(h *HTindex) {
+		h.WordsAround = w
 	}
 }
 
