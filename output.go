@@ -62,8 +62,8 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	of := csv.NewWriter(f)
 	tf := csv.NewWriter(titles)
 	_ = of.Write([]string{
-		"TimeStamp", "ID", "PageID", "Verbatim", "NameString", "OffsetStart",
-		"OffsetEnd", "WordsBefore", "WordsAfter", "Odds", "Kind",
+		"TimeStamp", "ID", "PageID", "Verbatim", "WordsBefore", "NameString",
+		"WordsAfter", "OffsetStart", "OffsetEnd", "Odds", "Kind",
 	})
 	_ = tf.Write([]string{"ID", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
 
@@ -90,10 +90,9 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 			for _, name := range p.res.Names {
 				n := newDetectedName(p, name)
 				out := []string{
-					n.timestamp, t.id, n.pageID, n.verbatim, n.nameString,
-					strconv.Itoa(n.offsetStart), strconv.Itoa(n.offsetEnd),
-					n.wordsBefore, n.wordsAfter,
-					strconv.Itoa(int(n.odds)), n.kind,
+					n.timestamp, t.id, n.pageID, n.verbatim, n.wordsBefore,
+					n.nameString, n.wordsAfter, strconv.Itoa(n.offsetStart),
+					strconv.Itoa(n.offsetEnd), strconv.Itoa(int(n.odds)), n.kind,
 				}
 				_ = of.Write(out)
 

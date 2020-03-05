@@ -15,6 +15,8 @@ import (
 	. "github.com/gnames/htindex"
 )
 
+var results []testData
+
 var _ = Describe("Htindex", func() {
 	Describe("NewHTindex", func() {
 		It("creates an instance of HTindex", func() {
@@ -94,11 +96,11 @@ const (
 	idF
 	pageIDF
 	verbatimF
+	wordsBeforeF
 	nameStringF
+	wordsAfterF
 	offsetStartF
 	offsetEndF
-	wordsBeforeF
-	wordsAfterF
 	oddsF
 	kindF
 )
@@ -108,11 +110,11 @@ type testData struct {
 	ID          string
 	PageID      string
 	Verbatim    string
+	WordsBefore string
 	NameString  string
+	WordsAfter  string
 	OffsetStart string
 	OffsetEnd   string
-	WordsBefore string
-	WordsAfter  string
 	Odds        string
 	Kind        string
 }
