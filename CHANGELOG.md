@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#18]: Save given number or words before and after names candidates.
+
 ## [v0.0.6]
 
 - Fix [#17]: Output is broken, many records repeat many times.

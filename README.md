@@ -72,6 +72,10 @@ processed and the rate (titles per minute).
 : Takes a string. Sets a root path to add to the input file data. This creates
 complete absolute path to zip files with volumes.
 
+`-w, --words-around`
+: Sets a number of words retained before and after every occurance of a
+name-candidate.
+
 `-v, --version`
 : Shows htindex version and build timestamp
 
