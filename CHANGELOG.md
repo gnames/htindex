@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.0.7]
+
 - Add [#19]: Provide sha256 for each title
 - Add [#18]: Save given number or words before and after names candidates.
 
@@ -43,6 +45,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.0.7]: https://github.com/gnames/htindex/compare/v0.0.6...v0.0.7
 [v0.0.6]: https://github.com/gnames/htindex/compare/v0.0.5...v0.0.6
 [v0.0.5]: https://github.com/gnames/htindex/compare/v0.0.4...v0.0.5
 [v0.0.4]: https://github.com/gnames/htindex/compare/v0.0.3...v0.0.4
@@ -50,6 +53,9 @@ This document follows [changelog guidelines]
 [v0.0.2]: https://github.com/gnames/htindex/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/gnames/htindex/compare/v0.0.0...v0.0.1
 
+[#20]: https://github.com/gnames/htindex/issues/20
+[#19]: https://github.com/gnames/htindex/issues/19
+[#18]: https://github.com/gnames/htindex/issues/18
 [#17]: https://github.com/gnames/htindex/issues/17
 [#16]: https://github.com/gnames/htindex/issues/16
 [#15]: https://github.com/gnames/htindex/issues/15
