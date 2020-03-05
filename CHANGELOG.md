@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add [#19]: Provide sha256 for each title
 - Add [#18]: Save given number or words before and after names candidates.
 
 ## [v0.0.6]

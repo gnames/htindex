@@ -2,8 +2,11 @@ package htindex
 
 import (
 	"archive/zip"
+	"crypto/sha256"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -29,6 +32,7 @@ type page struct {
 // title represents data and metadata from a title/book/volume.
 type title struct {
 	id               string
+	sha256           string
 	path             string
 	pages            []page
 	namesNum         int
@@ -67,7 +71,8 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 
 	for zipPath := range inCh {
 		t := title{id: getID(zipPath), path: zipPath}
-		r, err := zip.OpenReader(filepath.Join(hti.RootPrefix, zipPath))
+		path := filepath.Join(hti.RootPrefix, zipPath)
+		r, err := zip.OpenReader(path)
 		if err != nil {
 			errCh <- &htiError{msg: err.Error(), titleID: t.id, ts: ts()}
 		}
@@ -88,8 +93,22 @@ func (hti *HTindex) worker(inCh <-chan string, outCh chan<- *title,
 			t.namesNum += len(t.pages[i].res.Names)
 		}
 		r.Close()
+		t.sha256 = getSHA256(path)
 		outCh <- &t
 	}
+}
+
+func getSHA256(path string) string {
+	f, err := os.Open(path)
+	if err != nil {
+		return "n/a"
+	}
+	defer f.Close()
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "n/a"
+	}
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 // pagesContent generates a list of all pages with their texts sorted according

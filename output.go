@@ -65,7 +65,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 		"TimeStamp", "ID", "PageID", "Verbatim", "WordsBefore", "NameString",
 		"WordsAfter", "OffsetStart", "OffsetEnd", "Odds", "Kind",
 	})
-	_ = tf.Write([]string{"ID", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
+	_ = tf.Write([]string{"ID", "SHA256", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
 
 	defer f.Close()
 	defer titles.Close()
@@ -74,7 +74,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 
 	for t := range outCh {
 		_ = tf.Write([]string{
-			t.id, t.path, strconv.Itoa(len(t.pages)),
+			t.id, t.sha256, t.path, strconv.Itoa(len(t.pages)),
 			strconv.Itoa(t.pagesNumBadNames), strconv.Itoa(t.namesNum),
 		})
 
