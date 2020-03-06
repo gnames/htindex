@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v0.0.9]
+
+- Fix: sometimes before/after words are too big, now they are limited to
+       30 characters. Nomenclatural annotations cannot be something like
+       "n. n." or "sp. sp." anymore.
+
 ## [v0.0.8]
 
 - Add [#20]: Find nomenclatural annotations and save them in output.
