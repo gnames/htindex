@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v0.0.8]
+
 - Add [#20]: Find nomenclatural annotations and save them in output.
 
 ## [v0.0.7]
@@ -47,6 +49,7 @@
 
 This document follows [changelog guidelines]
 
+[v0.0.8]: https://github.com/gnames/htindex/compare/v0.0.7...v0.0.8
 [v0.0.7]: https://github.com/gnames/htindex/compare/v0.0.6...v0.0.7
 [v0.0.6]: https://github.com/gnames/htindex/compare/v0.0.5...v0.0.6
 [v0.0.5]: https://github.com/gnames/htindex/compare/v0.0.4...v0.0.5
