@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/abadojack/whatlanggo v1.0.1 // indirect
-	github.com/gnames/gnfinder v0.9.2-0.20200306095247-6394fa1cb0b0
+	github.com/gnames/gnfinder v0.9.2-0.20200306200412-bfc655c5b708
 	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/onsi/ginkgo v1.10.1
