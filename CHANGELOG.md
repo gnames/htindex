@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add [#20]: Find nomenclatural annotations and save them in output.
+
 ## [v0.0.7]
 
 - Add [#19]: Provide sha256 for each title

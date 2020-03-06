@@ -23,6 +23,7 @@ type detectedName struct {
 	offsetEnd   int
 	wordsBefore string
 	wordsAfter  string
+	annotNomen  string
 	odds        float64
 	kind        string
 	timestamp   string
@@ -63,7 +64,7 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 	tf := csv.NewWriter(titles)
 	_ = of.Write([]string{
 		"TimeStamp", "ID", "PageID", "Verbatim", "WordsBefore", "NameString",
-		"WordsAfter", "OffsetStart", "OffsetEnd", "Odds", "Kind",
+		"WordsAfter", "AnnotNomen", "OffsetStart", "OffsetEnd", "Odds", "Kind",
 	})
 	_ = tf.Write([]string{"ID", "SHA256", "Path", "PagesNumber", "BadPagesNumber", "NamesOccurences"})
 
@@ -91,8 +92,9 @@ func (hti *HTindex) outputResult(outCh <-chan *title, wgOut *sync.WaitGroup) {
 				n := newDetectedName(p, name)
 				out := []string{
 					n.timestamp, t.id, n.pageID, n.verbatim, n.wordsBefore,
-					n.nameString, n.wordsAfter, strconv.Itoa(n.offsetStart),
-					strconv.Itoa(n.offsetEnd), strconv.Itoa(int(n.odds)), n.kind,
+					n.nameString, n.wordsAfter, n.annotNomen,
+					strconv.Itoa(n.offsetStart), strconv.Itoa(n.offsetEnd),
+					strconv.Itoa(int(n.odds)), n.kind,
 				}
 				_ = of.Write(out)
 
@@ -121,6 +123,7 @@ func newDetectedName(p page, n output.Name) detectedName {
 		offsetEnd:   n.OffsetEnd,
 		wordsBefore: strings.Join(n.WordsBefore, "|"),
 		wordsAfter:  strings.Join(n.WordsAfter, "|"),
+		annotNomen:  n.AnnotNomen,
 		odds:        n.Odds,
 		kind:        n.Type,
 		timestamp:   ts(),
